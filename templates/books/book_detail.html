@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ book.title }} - ElegantBooks{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-md-4">
+    <div class="card">
+      {% if book.cover %}
+        <img src="{{ book.cover.url }}" class="card-img-top" style="height:420px; object-fit:cover;">
+      {% else %}
+        <img src="{% static 'images/placeholder-book.png' %}" class="card-img-top" style="height:420px; object-fit:cover;">
+      {% endif %}
+      <div class="card-body">
+        <div class="fw-bold text-primary">${{ book.price }}</div>
+        <p class="mt-2">Stock: {{ book.stock }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-8">
+    <h2>{{ book.title }}</h2>
+    <p class="text-muted small">
+      Authors:
+      {% for a in book.authors.all %}{{ a.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
+    </p>
+    <p>{{ book.description|default:"No description." }}</p>
+
+    <form method="post" action="{% url 'cart:add_to_cart' %}">
+      {% csrf_token %}
+      <input type="hidden" name="book_id" value="{{ book.id }}">
+      <div class="row g-2 align-items-center">
+        <div class="col-auto">
+          <input type="number" name="quantity" value="1" min="1" max="{{ book.stock }}" class="form-control" style="width:100px;">
+        </div>
+        <div class="col">
+          {% if user.is_authenticated %}
+            <button class="btn btn-primary">Add to cart</button>
+          {% else %}
+            <a class="btn btn-primary" href="{% url 'users:login' %}">Login to buy</a>
+          {% endif %}
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Your Cart - ElegantBooks{% endblock %}
+{% block content %}
+<h2>Your Cart</h2>
+<form method="post" action="{% url 'cart:update_cart' %}">
+  {% csrf_token %}
+  <div class="table-responsive shadow-sm mb-3">
+    <table class="table align-middle">
+      <thead>
+        <tr>
+          <th>Book</th>
+          <th>Price</th>
+          <th style="width:120px">Qty</th>
+          <th>Subtotal</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td>
+            <strong>{{ item.book.title }}</strong>
+            <div class="small text-muted">{% for a in item.book.authors.all %}{{ a.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</div>
+          </td>
+          <td>${{ item.book.price }}</td>
+          <td>
+            <input class="form-control" type="number" name="qty_{{ item.pk }}" value="{{ item.quantity }}" min="0" max="{{ item.book.stock }}">
+          </td>
+          <td>${{ item.subtotal|floatformat:2 }}</td>
+          <td>
+            <a href="{% url 'cart:remove_item' item.pk %}" class="btn btn-sm btn-outline-danger">Remove</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <button class="btn btn-outline-secondary" type="submit">Update Cart</button>
+    </div>
+    <div>
+      <strong class="me-3">Total: ${{ total|floatformat:2 }}</strong>
+      <a href="{% url 'orders:checkout' %}" class="btn btn-primary">Proceed to Checkout</a>
+    </div>
+  </div>
+</form>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Delete Author{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card border-danger shadow">
+        <div class="card-header bg-danger text-white">
+          <h4>Delete Author</h4>
+        </div>
+        <div class="card-body">
+          <p>Delete author <strong>{{ object.name }}</strong>?</p>
+          <form method="post">
+            {% csrf_token %}
+            <div class="d-flex justify-content-end">
+              <a href="{% url 'books:authors_list' %}" class="btn btn-secondary me-2">Cancel</a>
+              <button type="submit" class="btn btn-danger">Delete</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
